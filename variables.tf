@@ -50,4 +50,9 @@ variable "network_id" {
 variable "port" {
   type    = number
   default = 5432
+
+  validation {
+    condition     = var.port == 5432
+    error_message = "Having `port` different than 5432 is not yet implemented."
+  }
 }
