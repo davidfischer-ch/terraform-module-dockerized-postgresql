@@ -8,9 +8,8 @@ terraform {
     }
 
     jinja = {
-      # 18-12-2022 Released 16-12-2022
       source  = "NikolaLohinski/jinja"
-      version = ">= 1.4.0"
+      version = ">= 1.15.0"
     }
 
     local = {
