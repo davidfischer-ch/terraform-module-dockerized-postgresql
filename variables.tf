@@ -15,14 +15,6 @@ variable "data_directory" {
   type = string
 }
 
-# Logging
-
-variable "error_log_level" {
-  type    = string
-  default = "warn"
-  # TODO check if ...
-}
-
 # Database
 
 variable "name" {
