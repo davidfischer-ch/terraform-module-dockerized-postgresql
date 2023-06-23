@@ -3,6 +3,8 @@ resource "docker_container" "server" {
   image = var.image_id
   name  = var.identifier
 
+  command = ["-N", tostring(var.max_connections)]
+
   must_run = var.enabled
   start    = var.enabled
   restart  = "always"

@@ -33,6 +33,17 @@ variable "password" {
   sensitive = true
 }
 
+# Configuration
+
+variable "max_connections" {
+  type    = number
+  default = 100
+  validation {
+    condition     = var.max_connections >= 1 && var.max_connections <= 262143
+    error_message = "Argument `max_connections` should be between 1 and 262143, see https://postgresqlco.nf/doc/en/param/max_connections/."
+  }
+}
+
 # Networking
 
 variable "network_id" {
