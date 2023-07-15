@@ -1,9 +1,15 @@
 variable "identifier" {
-  type = string
+  type        = string
+  description = "Identifier (must be unique, used to name resources)."
+  validation {
+    condition     = regex("^[a-z]+(-[a-z0-9]+)*$", var.identifier) != null
+    error_message = "Argument `identifier` must match regex ^[a-z]+(-[a-z0-9]+)*$."
+  }
 }
 
 variable "enabled" {
-  type = bool
+  type        = bool
+  description = "Toggle the containers (started or stopped)."
 }
 
 variable "image_id" {
@@ -12,7 +18,8 @@ variable "image_id" {
 }
 
 variable "data_directory" {
-  type = string
+  type        = string
+  description = "Where data will be persisted (volumes will be mounted as sub-directories)."
 }
 
 # Database
@@ -47,7 +54,8 @@ variable "max_connections" {
 # Networking
 
 variable "network_id" {
-  type = string
+  type        = string
+  description = "Attach the containers to given network."
 }
 
 variable "port" {
