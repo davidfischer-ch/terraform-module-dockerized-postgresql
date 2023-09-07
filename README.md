@@ -7,7 +7,9 @@ Manage PostgreSQL server.
 - https://hub.docker.com/_/postgres
 - https://github.com/davidfischer-ch/ansible-role-postgresql
 
-## Backup database (dump SQL)
+## Actions
+
+### Backup database (to a SQL dump)
 
 Note: PGDATA is /var/lib/postgresql/data/
 
@@ -20,7 +22,7 @@ sudo docker cp $CONTAINER:/var/lib/postgresql/data/db.sql db.sql
 sudo docker exec -it $CONTAINER rm /var/lib/postgresql/data/db.sql
 ```
 
-### Restore database (from a dump)
+### Restore database (from a SQL dump)
 
 ```
 CONTAINER=<your-container>
