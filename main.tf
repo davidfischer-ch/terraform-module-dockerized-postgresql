@@ -12,18 +12,26 @@ resource "docker_container" "server" {
 
   # shm_size = 256 # MB
 
-  hostname = var.identifier
-
-  networks_advanced {
-    name = var.network_id
-  }
-
   env = [
     "POSTGRES_DB=${var.name}",
     "POSTGRES_USER=${var.user}",
     "POSTGRES_PASSWORD=${var.password}",
     "PGDATA=${local.container_data_directory}"
   ]
+
+  dynamic "host" {
+    for_each = var.hosts
+    content {
+      host = host.key
+      ip   = host.value
+    }
+  }
+
+  hostname = var.identifier
+
+  networks_advanced {
+    name = var.network_id
+  }
 
   volumes {
     container_path = local.container_data_directory
