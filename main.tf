@@ -33,9 +33,16 @@ resource "docker_container" "server" {
     name = var.network_id
   }
 
+  # Data owner 999:root
   volumes {
     container_path = local.container_data_directory
     host_path      = local.host_data_directory
     read_only      = false
+  }
+
+  provisioner "local-exec" {
+    command = <<EOT
+      chown 999:root "${local.host_data_directory}"
+    EOT
   }
 }
