@@ -33,6 +33,8 @@ resource "docker_container" "server" {
     name = var.network_id
   }
 
+  network_mode = "bridge"
+
   # Data owner 999:root
   volumes {
     container_path = local.container_data_directory
