@@ -42,8 +42,19 @@ resource "docker_container" "server" {
     read_only      = false
   }
 
+  # Init scripts (read-only, runs only on first init)
+  dynamic "volumes" {
+    for_each = var.init_scripts ? [local.host_init_directory] : []
+    content {
+      container_path = "/docker-entrypoint-initdb.d"
+      host_path      = volumes.value
+      read_only      = true
+    }
+  }
+
   provisioner "local-exec" {
     command = <<EOT
+      mkdir -p "${local.host_data_directory}"
       chown 999:root "${local.host_data_directory}"
     EOT
   }

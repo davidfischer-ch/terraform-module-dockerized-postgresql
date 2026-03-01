@@ -57,6 +57,15 @@ variable "max_connections" {
   }
 }
 
+variable "init_scripts" {
+  type        = bool
+  default     = false
+  description = <<EOT
+    Bind-mount {data_directory}/init to /docker-entrypoint-initdb.d (read-only).
+    Scripts placed there run once when PostgreSQL initializes a new database.
+  EOT
+}
+
 # Networking ---------------------------------------------------------------------------------------
 
 variable "hosts" {
