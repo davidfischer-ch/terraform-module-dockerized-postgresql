@@ -53,7 +53,10 @@ variable "max_connections" {
   default = 100
   validation {
     condition     = var.max_connections >= 1 && var.max_connections <= 262143
-    error_message = "Argument `max_connections` should be between 1 and 262143, see https://postgresqlco.nf/doc/en/param/max_connections/."
+    error_message = <<EOT
+      Argument `max_connections` should be between 1 and 262143,
+      see https://postgresqlco.nf/doc/en/param/max_connections/.
+    EOT
   }
 }
 
