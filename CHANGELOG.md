@@ -1,5 +1,11 @@
 # Changelog
 
+## Release v1.0.2 (2026-03-01)
+
+### Features
+
+* Add `init_scripts` argument to optionally bind mount init scripts directory
+
 ## Release v1.0.1 (2025-08-23)
 
 ### Fix and enhancements
