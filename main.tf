@@ -1,5 +1,12 @@
 resource "docker_container" "server" {
 
+  lifecycle {
+    precondition {
+      condition     = !var.wait || var.healthcheck_enabled
+      error_message = "Argument `healthcheck_enabled` must be true when `wait` is true."
+    }
+  }
+
   image = var.image_id
   name  = var.identifier
 
@@ -18,6 +25,16 @@ resource "docker_container" "server" {
     "POSTGRES_PASSWORD=${var.password}",
     "PGDATA=${local.container_data_directory}"
   ]
+
+  dynamic "healthcheck" {
+    for_each = var.healthcheck_enabled ? [1] : []
+    content {
+      test     = ["CMD-SHELL", "pg_isready -U ${var.user} -d ${var.name}"]
+      interval = var.healthcheck_interval
+      timeout  = var.healthcheck_timeout
+      retries  = var.healthcheck_retries
+    }
+  }
 
   dynamic "host" {
     for_each = var.hosts

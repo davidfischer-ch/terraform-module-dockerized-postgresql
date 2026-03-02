@@ -15,7 +15,31 @@ variable "enabled" {
 variable "wait" {
   type        = bool
   default     = false
-  description = "Wait for the container to reach an healthy state after creation."
+  description = "Wait for the container to reach a healthy state after creation."
+}
+
+variable "healthcheck_enabled" {
+  type        = bool
+  default     = true
+  description = "Enable the healthcheck (based on pg_isready)?"
+}
+
+variable "healthcheck_interval" {
+  type        = string
+  default     = "10s"
+  description = "Time between healthcheck attempts."
+}
+
+variable "healthcheck_timeout" {
+  type        = string
+  default     = "5s"
+  description = "Maximum time to wait for a healthcheck to complete."
+}
+
+variable "healthcheck_retries" {
+  type        = number
+  default     = 5
+  description = "Number of consecutive failures before marking unhealthy."
 }
 
 variable "image_id" {
