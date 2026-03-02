@@ -1,5 +1,25 @@
 # Changelog
 
+## Release v1.1.0 (2026-03-02)
+
+### Minor compatibility breaks
+
+* Healthcheck is now enabled by default, existing containers will be updated
+
+### Migrations
+
+* Simply set `healthcheck_enabled` to false to revert to previous behavior
+
+### Features
+
+* Add configurable healthcheck based on `pg_isready`:
+    * `healthcheck_enabled` default is true
+    * `healthcheck_interval` default is 10s
+    * `healthcheck_timeout` default is 5s
+    * `healthcheck_retries` default is 5
+    * `healthcheck_start_period` default is 60s
+* Add precondition ensuring `healthcheck_enabled` is true when `wait` is true
+
 ## Release v1.0.3 (2026-03-02)
 
 ### Features
