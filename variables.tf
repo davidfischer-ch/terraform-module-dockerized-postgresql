@@ -44,7 +44,7 @@ variable "healthcheck_retries" {
 
 variable "healthcheck_start_period" {
   type        = string
-  default     = "60s"
+  default     = "1m0s"
   description = "Grace period during startup where healthcheck failures are not counted."
 }
 
