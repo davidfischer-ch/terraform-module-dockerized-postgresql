@@ -1,5 +1,11 @@
 # Changelog
 
+## Release v1.0.3 (2026-03-02)
+
+### Features
+
+* Add `data_owner` variable to parameterize data directory ownership
+
 ## Release v1.0.2 (2026-03-01)
 
 ### Features
