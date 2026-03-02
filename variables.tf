@@ -28,6 +28,12 @@ variable "data_directory" {
   description = "Where data will be persisted (volumes will be mounted as sub-directories)."
 }
 
+variable "data_owner" {
+  type        = string
+  default     = "999:root"
+  description = "Owner (UID:GID) for data directories."
+}
+
 # Database -----------------------------------------------------------------------------------------
 
 variable "name" {

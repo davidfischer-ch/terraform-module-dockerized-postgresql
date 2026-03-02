@@ -35,7 +35,6 @@ resource "docker_container" "server" {
 
   network_mode = "bridge"
 
-  # Data owner 999:root
   volumes {
     container_path = local.container_data_directory
     host_path      = local.host_data_directory
@@ -55,7 +54,7 @@ resource "docker_container" "server" {
   provisioner "local-exec" {
     command = <<EOT
       mkdir -p "${local.host_data_directory}"
-      chown 999:root "${local.host_data_directory}"
+      chown ${var.data_owner} "${local.host_data_directory}"
     EOT
   }
 }
