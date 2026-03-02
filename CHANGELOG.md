@@ -1,5 +1,11 @@
 # Changelog
 
+## Release v1.1.1 (2026-03-02)
+
+### Fix and enhancements
+
+* Change `healthcheck_start_period` default from `60s` to `1m0s` to prevent infinite drift
+
 ## Release v1.1.0 (2026-03-02)
 
 ### Minor compatibility breaks
