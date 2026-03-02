@@ -29,10 +29,11 @@ resource "docker_container" "server" {
   dynamic "healthcheck" {
     for_each = var.healthcheck_enabled ? [1] : []
     content {
-      test     = ["CMD-SHELL", "pg_isready -U ${var.user} -d ${var.name}"]
-      interval = var.healthcheck_interval
-      timeout  = var.healthcheck_timeout
-      retries  = var.healthcheck_retries
+      test         = ["CMD-SHELL", "pg_isready -U ${var.user} -d ${var.name}"]
+      interval     = var.healthcheck_interval
+      timeout      = var.healthcheck_timeout
+      retries      = var.healthcheck_retries
+      start_period = var.healthcheck_start_period
     }
   }
 

@@ -42,6 +42,12 @@ variable "healthcheck_retries" {
   description = "Number of consecutive failures before marking unhealthy."
 }
 
+variable "healthcheck_start_period" {
+  type        = string
+  default     = "60s"
+  description = "Grace period during startup where healthcheck failures are not counted."
+}
+
 variable "image_id" {
   type        = string
   description = "PostgreSQL image's ID."
