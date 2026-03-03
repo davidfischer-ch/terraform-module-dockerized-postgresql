@@ -11,14 +11,14 @@ Manage PostgreSQL server.
 
 ```hcl
 module "database" {
-  source = "git::https://github.com/davidfischer-ch/terraform-module-dockerized-postgresql.git?ref=1.0.1"
+  source = "git::https://github.com/davidfischer-ch/terraform-module-dockerized-postgresql.git?ref=1.1.1"
 
   identifier     = "my-app-database"
   enabled        = true
   image_id       = docker_image.postgresql.image_id
   data_directory = "/data/my-app/database"
 
-  hosts      = module.fisch3r_net.lan_hosts
+  hosts      = { "myserver" = "10.0.0.1" }
   network_id = docker_network.app.id
 
   name     = "my-app"
