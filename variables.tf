@@ -53,15 +53,43 @@ variable "image_id" {
   description = "PostgreSQL image's ID."
 }
 
+# Process ------------------------------------------------------------------------------------------
+
+variable "app_uid" {
+  type        = number
+  default     = 999
+  description = "UID of the user running the container and owning the data directories."
+}
+
+variable "app_gid" {
+  type        = number
+  default     = 0
+  description = "GID of the user running the container and owning the data directories."
+}
+
+variable "privileged" {
+  type        = bool
+  default     = false
+  description = "Run the container in privileged mode."
+}
+
+variable "cap_add" {
+  type        = set(string)
+  default     = []
+  description = "Linux capabilities to add to the container."
+}
+
+variable "cap_drop" {
+  type        = set(string)
+  default     = []
+  description = "Linux capabilities to drop from the container."
+}
+
+# Storage ------------------------------------------------------------------------------------------
+
 variable "data_directory" {
   type        = string
   description = "Where data will be persisted (volumes will be mounted as sub-directories)."
-}
-
-variable "data_owner" {
-  type        = string
-  default     = "999:root"
-  description = "Owner (UID:GID) for data directories."
 }
 
 # Database -----------------------------------------------------------------------------------------

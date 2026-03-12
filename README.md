@@ -54,8 +54,12 @@ data_directory/
 | `healthcheck_retries` | `number` | `5` | Consecutive failures before marking unhealthy. |
 | `healthcheck_start_period` | `string` | `"1m0s"` | Grace period during startup. |
 | `image_id` | `string` | — | [PostgreSQL](https://hub.docker.com/_/postgres/tags) Docker image's ID. |
+| `app_uid` | `number` | `999` | UID of the user running the container and owning the data directories. |
+| `app_gid` | `number` | `0` | GID of the user running the container and owning the data directories. |
+| `privileged` | `bool` | `false` | Run the container in privileged mode. |
+| `cap_add` | `set(string)` | `[]` | Linux capabilities to add to the container. |
+| `cap_drop` | `set(string)` | `[]` | Linux capabilities to drop from the container. |
 | `data_directory` | `string` | — | Host path for persistent volumes. |
-| `data_owner` | `string` | `"999:root"` | UID:GID for data directories. |
 | `name` | `string` | — | Database name. |
 | `user` | `string` | — | Database user. |
 | `password` | `string` | — | Database password (sensitive). |
