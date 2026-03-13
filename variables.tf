@@ -63,7 +63,7 @@ variable "app_uid" {
 
 variable "app_gid" {
   type        = number
-  default     = 0
+  default     = 999
   description = "GID of the user running the container and owning the data directories."
 }
 
