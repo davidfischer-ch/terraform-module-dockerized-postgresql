@@ -88,3 +88,16 @@ resource "docker_container" "server" {
     EOT
   }
 }
+
+resource "terraform_data" "password" {
+  triggers_replace = [var.password]
+
+  provisioner "local-exec" {
+    command = "until docker exec ${var.identifier} psql -U ${var.user} -c \"ALTER USER \\\"${var.user}\\\" PASSWORD '$PG_PASSWORD'\"; do sleep 5; done"
+    environment = {
+      PG_PASSWORD = var.password
+    }
+  }
+
+  depends_on = [docker_container.server]
+}
