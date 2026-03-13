@@ -15,12 +15,13 @@ See [examples/default](examples/default) for a complete working configuration.
 module "database" {
   source = "git::https://github.com/davidfischer-ch/terraform-module-dockerized-postgresql.git?ref=1.2.2"
 
-  identifier     = "my-app-database"
-  image_id       = docker_image.postgresql.image_id
-  data_directory = "/data/my-app/database"
+  identifier = "my-app-database"
+  image_id   = docker_image.postgresql.image_id
 
   hosts      = { "myserver" = "10.0.0.1" }
   network_id = docker_network.app.id
+
+  data_directory = "/data/my-app/database"
 
   name     = "my-app"
   user     = "my-app"
@@ -56,15 +57,15 @@ data_directory/
 | `privileged` | `bool` | `false` | Run the container in privileged mode. |
 | `cap_add` | `set(string)` | `[]` | Linux capabilities to add to the container. |
 | `cap_drop` | `set(string)` | `[]` | Linux capabilities to drop from the container. |
+| `hosts` | `map(string)` | `{}` | Extra `/etc/hosts` entries for the container. |
+| `network_id` | `string` | — | Docker network to attach to. |
+| `port` | `number` | `5432` | PostgreSQL port (changing not yet implemented). |
 | `data_directory` | `string` | — | Host path for persistent volumes. |
 | `name` | `string` | — | Database name. |
 | `user` | `string` | — | Database user. |
 | `password` | `string` | — | Database password (sensitive). |
 | `max_connections` | `number` | `100` | PostgreSQL `max_connections` (1–262143). |
 | `init_scripts` | `bool` | `false` | Bind-mount `{data_directory}/init` to `/docker-entrypoint-initdb.d`. |
-| `hosts` | `map(string)` | `{}` | Extra `/etc/hosts` entries for the container. |
-| `network_id` | `string` | — | Docker network to attach to. |
-| `port` | `number` | `5432` | PostgreSQL port (changing not yet implemented). |
 
 ## Outputs
 

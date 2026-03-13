@@ -92,6 +92,30 @@ variable "cap_drop" {
   default     = []
 }
 
+# Networking ---------------------------------------------------------------------------------------
+
+variable "hosts" {
+  type        = map(string)
+  description = "Add entries to container hosts file."
+  default     = {}
+}
+
+variable "network_id" {
+  type        = string
+  description = "Attach the containers to given network."
+}
+
+variable "port" {
+  type        = number
+  description = "Bind the PostgreSQL port."
+  default     = 5432
+
+  validation {
+    condition     = var.port == 5432
+    error_message = "Having `port` different than 5432 is not yet implemented."
+  }
+}
+
 # Storage ------------------------------------------------------------------------------------------
 
 variable "data_directory" {
@@ -142,28 +166,4 @@ variable "init_scripts" {
     Scripts placed there run once when PostgreSQL initializes a new database.
   EOT
   default     = false
-}
-
-# Networking ---------------------------------------------------------------------------------------
-
-variable "hosts" {
-  type        = map(string)
-  description = "Add entries to container hosts file."
-  default     = {}
-}
-
-variable "network_id" {
-  type        = string
-  description = "Attach the containers to given network."
-}
-
-variable "port" {
-  type        = number
-  description = "Bind the PostgreSQL port."
-  default     = 5432
-
-  validation {
-    condition     = var.port == 5432
-    error_message = "Having `port` different than 5432 is not yet implemented."
-  }
 }

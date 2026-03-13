@@ -16,13 +16,23 @@ resource "random_password" "database" {
 module "database" {
   source = "git::https://github.com/davidfischer-ch/terraform-module-dockerized-postgresql.git?ref=1.2.1"
 
-  identifier     = "my-app-database"
-  image_id       = docker_image.postgresql.image_id
-  data_directory = "/data/my-app/database"
+  identifier = "my-app-database"
+  image_id   = docker_image.postgresql.image_id
+
+  # Networking
 
   network_id = docker_network.app.id
 
-  name     = "my-app"
-  user     = "my-app"
+  # Storage
+
+  data_directory = "/data/my-app/database"
+
+  # Database
+
+  name = "my-app"
+  user = "my-app"
+
+  # Authentication
+
   password = random_password.database.result
 }
