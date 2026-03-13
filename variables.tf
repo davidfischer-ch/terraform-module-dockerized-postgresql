@@ -9,12 +9,13 @@ variable "identifier" {
 
 variable "enabled" {
   type        = bool
+  default     = true
   description = "Toggle the containers (started or stopped)."
 }
 
 variable "wait" {
   type        = bool
-  default     = false
+  default     = true
   description = "Wait for the container to reach a healthy state after creation."
 }
 

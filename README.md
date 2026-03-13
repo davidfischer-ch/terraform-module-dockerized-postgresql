@@ -46,8 +46,8 @@ data_directory/
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
 | `identifier` | `string` | — | Unique name for resources (must match `^[a-z]+(-[a-z0-9]+)*$`). |
-| `enabled` | `bool` | — | Start or stop the container. |
-| `wait` | `bool` | `false` | Wait for the container to reach a healthy state after creation. |
+| `enabled` | `bool` | `true` | Start or stop the container. |
+| `wait` | `bool` | `true` | Wait for the container to reach a healthy state after creation. |
 | `healthcheck_enabled` | `bool` | `true` | Enable the healthcheck (based on `pg_isready`). |
 | `healthcheck_interval` | `string` | `"10s"` | Time between healthcheck attempts. |
 | `healthcheck_timeout` | `string` | `"5s"` | Maximum time to wait for a healthcheck to complete. |
