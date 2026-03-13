@@ -1,6 +1,7 @@
 variable "identifier" {
   type        = string
   description = "Identifier (must be unique, used to name resources)."
+
   validation {
     condition     = regex("^[a-z]+(-[a-z0-9]+)*$", var.identifier) != null
     error_message = "Argument `identifier` must match regex ^[a-z]+(-[a-z0-9]+)*$."
@@ -9,44 +10,49 @@ variable "identifier" {
 
 variable "enabled" {
   type        = bool
-  default     = true
   description = "Toggle the containers (started or stopped)."
+  default     = true
 }
 
 variable "wait" {
   type        = bool
-  default     = true
   description = "Wait for the container to reach a healthy state after creation."
+  default     = true
 }
 
 variable "healthcheck_enabled" {
   type        = bool
-  default     = true
   description = "Enable the healthcheck (based on pg_isready)?"
+  default     = true
 }
 
 variable "healthcheck_interval" {
   type        = string
-  default     = "10s"
   description = "Time between healthcheck attempts."
+  default     = "10s"
 }
 
 variable "healthcheck_timeout" {
   type        = string
-  default     = "5s"
   description = "Maximum time to wait for a healthcheck to complete."
+  default     = "5s"
 }
 
 variable "healthcheck_retries" {
   type        = number
-  default     = 5
   description = "Number of consecutive failures before marking unhealthy."
+  default     = 5
+
+  validation {
+    condition     = var.healthcheck_retries >= 1
+    error_message = "Argument `healthcheck_retries` must be at least 1."
+  }
 }
 
 variable "healthcheck_start_period" {
   type        = string
-  default     = "1m0s"
   description = "Grace period during startup where healthcheck failures are not counted."
+  default     = "1m0s"
 }
 
 variable "image_id" {
@@ -58,32 +64,32 @@ variable "image_id" {
 
 variable "app_uid" {
   type        = number
-  default     = 999
   description = "UID of the user running the container and owning the data directories."
+  default     = 999
 }
 
 variable "app_gid" {
   type        = number
-  default     = 999
   description = "GID of the user running the container and owning the data directories."
+  default     = 999
 }
 
 variable "privileged" {
   type        = bool
-  default     = false
   description = "Run the container in privileged mode."
+  default     = false
 }
 
 variable "cap_add" {
   type        = set(string)
-  default     = []
   description = "Linux capabilities to add to the container."
+  default     = []
 }
 
 variable "cap_drop" {
   type        = set(string)
-  default     = []
   description = "Linux capabilities to drop from the container."
+  default     = []
 }
 
 # Storage ------------------------------------------------------------------------------------------
@@ -103,19 +109,23 @@ variable "name" {
 # Authentication -----------------------------------------------------------------------------------
 
 variable "user" {
-  type = string
+  type        = string
+  description = "PostgreSQL database user."
 }
 
 variable "password" {
-  type      = string
-  sensitive = true
+  type        = string
+  description = "PostgreSQL database password."
+  sensitive   = true
 }
 
 # Configuration ------------------------------------------------------------------------------------
 
 variable "max_connections" {
-  type    = number
-  default = 100
+  type        = number
+  description = "Maximum number of PostgreSQL connections."
+  default     = 100
+
   validation {
     condition     = var.max_connections >= 1 && var.max_connections <= 262143
     error_message = <<EOT
@@ -127,19 +137,19 @@ variable "max_connections" {
 
 variable "init_scripts" {
   type        = bool
-  default     = false
   description = <<EOT
     Bind-mount {data_directory}/init to /docker-entrypoint-initdb.d (read-only).
     Scripts placed there run once when PostgreSQL initializes a new database.
   EOT
+  default     = false
 }
 
 # Networking ---------------------------------------------------------------------------------------
 
 variable "hosts" {
   type        = map(string)
-  default     = {}
   description = "Add entries to container hosts file."
+  default     = {}
 }
 
 variable "network_id" {
@@ -148,8 +158,9 @@ variable "network_id" {
 }
 
 variable "port" {
-  type    = number
-  default = 5432
+  type        = number
+  description = "Bind the PostgreSQL port."
+  default     = 5432
 
   validation {
     condition     = var.port == 5432
