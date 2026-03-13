@@ -13,7 +13,7 @@ See [examples/default](examples/default) for a complete working configuration.
 
 ```hcl
 module "database" {
-  source = "git::https://github.com/davidfischer-ch/terraform-module-dockerized-postgresql.git?ref=1.2.0"
+  source = "git::https://github.com/davidfischer-ch/terraform-module-dockerized-postgresql.git?ref=1.2.2"
 
   identifier     = "my-app-database"
   image_id       = docker_image.postgresql.image_id
