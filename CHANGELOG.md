@@ -1,5 +1,11 @@
 # Changelog
 
+## Release v1.2.1 (2026-03-13)
+
+### Features
+
+* Ensure password is updated on change using a SQL `ALTER USER … PASSWORD`, you can now taint password w/o needing to do manual steps for the change to take effect
+
 ## Release v1.2.0 (2026-03-13)
 
 ### Breaking changes
