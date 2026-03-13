@@ -16,7 +16,6 @@ module "database" {
   source = "git::https://github.com/davidfischer-ch/terraform-module-dockerized-postgresql.git?ref=1.2.0"
 
   identifier     = "my-app-database"
-  enabled        = true
   image_id       = docker_image.postgresql.image_id
   data_directory = "/data/my-app/database"
 
@@ -26,8 +25,6 @@ module "database" {
   name     = "my-app"
   user     = "my-app"
   password = random_password.database.result
-
-  max_connections = 100
 }
 ```
 
