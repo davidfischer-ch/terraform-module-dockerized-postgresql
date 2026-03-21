@@ -1,5 +1,11 @@
 # Changelog
 
+## Release v1.3.1 (2026-03-21)
+
+### Fix and enhancements
+
+* Replace local-exec provisioners with a terraform_data resource for directory management
+
 ## Release v1.3.0 (2026-03-14)
 
 ### Minor compatibility breaks
