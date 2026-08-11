@@ -23,6 +23,9 @@ module "database" {
 
   network_id = docker_network.app.id
 
+  # Publish the port to the host (optional; omit to keep it reachable only from other containers):
+  # publish = { host_ip = "127.0.0.1", host_port = 5432 }
+
   # Storage
 
   data_directory = "/data/my-app/database"

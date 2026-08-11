@@ -124,6 +124,20 @@ variable "port" {
   }
 }
 
+variable "publish" {
+  type = object({
+    host_ip   = string
+    host_port = optional(number, 5432)
+  })
+  description = <<EOT
+    Publish the PostgreSQL port to the host: `host_ip` is the interface to bind ("0.0.0.0" for all
+    interfaces, "127.0.0.1" for localhost-only), `host_port` the external port (defaults to 5432).
+    Leave null to not publish - the database stays reachable only from other containers on
+    `network_id`.
+  EOT
+  default     = null
+}
+
 # Storage ------------------------------------------------------------------------------------------
 
 variable "data_directory" {

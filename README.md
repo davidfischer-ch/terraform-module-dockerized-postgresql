@@ -3,6 +3,7 @@
 Manage PostgreSQL server.
 
 * Runs in bridge networking mode
+* Optionally publishes the port to a host IP and port
 * Persists data directory
 * Configurable healthcheck (based on `pg_isready`)
 * Supports one-time init scripts via `/docker-entrypoint-initdb.d`
@@ -66,6 +67,7 @@ data_directory/
 | `hosts` | `map(string)` | `{}` | Extra `/etc/hosts` entries for the container. |
 | `network_id` | `string` | — | Docker network to attach to. |
 | `port` | `number` | `5432` | PostgreSQL port (changing not yet implemented). |
+| `publish` | `object({ host_ip = string, host_port = optional(number, 5432) })` | `null` | Publish the port to the host (`host_ip` to bind, `host_port` the external port). `null` keeps it reachable only from other containers on `network_id`. |
 | `data_directory` | `string` | — | Host path for persistent volumes. |
 | `name` | `string` | — | Database name. |
 | `user` | `string` | — | Database user. |

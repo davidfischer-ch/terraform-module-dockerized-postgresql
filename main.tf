@@ -57,6 +57,15 @@ resource "docker_container" "server" {
     }
   }
 
+  dynamic "ports" {
+    for_each = var.publish != null ? [var.publish] : []
+    content {
+      internal = var.port
+      external = ports.value.host_port
+      ip       = ports.value.host_ip
+    }
+  }
+
   hostname = var.identifier
 
   networks_advanced {
