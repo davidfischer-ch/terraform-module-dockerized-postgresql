@@ -1,5 +1,11 @@
 # Changelog
 
+## Release v1.3.2 (2026-08-11)
+
+### Features
+
+* Add a `publish` variable to expose the PostgreSQL port on a host IP and port
+
 ## Release v1.3.1 (2026-03-21)
 
 ### Fix and enhancements
