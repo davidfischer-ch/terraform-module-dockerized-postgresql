@@ -123,7 +123,9 @@ terraform test
 
 The tests plan against a mocked Docker provider: they assert the password provisioner's shell
 command on its text without running it, and cover neither the server's handling of `settings` nor
-the provider's plan of an existing container (an `shm_size` set back to `null`).
+the provider's plan of an existing container (an `shm_size` set back to `null`). They run on every
+push, in the GitHub workflow (with the newest Docker provider and its minimum) and in the GitLab
+pipeline.
 
 
 ## Actions
