@@ -72,8 +72,8 @@ data_directory/
 | `port` | `number` | `5432` | PostgreSQL port (changing not yet implemented). |
 | `publish` | `object({ host_ip = string, host_port = optional(number, 5432) })` | `null` | Publish the port to the host (`host_ip` to bind, `host_port` the external port). `null` keeps it reachable only from other containers on `network_id`. |
 | `data_directory` | `string` | — | Host path for persistent volumes. |
-| `name` | `string` | — | Database name. |
-| `user` | `string` | — | Database user. |
+| `name` | `string` | — | Database name (must match `^[A-Za-z0-9_][A-Za-z0-9_.-]*$`). |
+| `user` | `string` | — | Database user (must match `^[A-Za-z0-9_][A-Za-z0-9_.-]*$`). |
 | `password` | `string` | — | Database password (sensitive). |
 | `max_connections` | `number` | `100` | PostgreSQL `max_connections` (1–262143). |
 | `init_scripts` | `bool` | `false` | Bind-mount `{data_directory}/init` to `/docker-entrypoint-initdb.d`. |
@@ -94,6 +94,16 @@ data_directory/
 
 * Terraform >= 1.17
 * [kreuzwerker/docker](https://github.com/kreuzwerker/terraform-provider-docker) >= 3.0.2
+
+
+## Tests
+
+```
+terraform init -backend=false
+terraform test
+```
+
+The tests plan against a mocked Docker provider.
 
 
 ## Actions

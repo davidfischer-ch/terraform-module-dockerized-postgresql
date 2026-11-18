@@ -3,7 +3,7 @@ variable "identifier" {
   description = "Identifier (must be unique, used to name resources)."
 
   validation {
-    condition     = regex("^[a-z]+(-[a-z0-9]+)*$", var.identifier) != null
+    condition     = can(regex("^[a-z]+(-[a-z0-9]+)*$", var.identifier))
     error_message = "Argument `identifier` must match regex ^[a-z]+(-[a-z0-9]+)*$."
   }
 }
@@ -150,6 +150,11 @@ variable "data_directory" {
 variable "name" {
   type        = string
   description = "Database name"
+
+  validation {
+    condition     = can(regex("^[A-Za-z0-9_][A-Za-z0-9_.-]*$", var.name))
+    error_message = "Argument `name` must match regex ^[A-Za-z0-9_][A-Za-z0-9_.-]*$."
+  }
 }
 
 # Authentication -----------------------------------------------------------------------------------
@@ -157,6 +162,11 @@ variable "name" {
 variable "user" {
   type        = string
   description = "PostgreSQL database user."
+
+  validation {
+    condition     = can(regex("^[A-Za-z0-9_][A-Za-z0-9_.-]*$", var.user))
+    error_message = "Argument `user` must match regex ^[A-Za-z0-9_][A-Za-z0-9_.-]*$."
+  }
 }
 
 variable "password" {
