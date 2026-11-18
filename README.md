@@ -92,7 +92,7 @@ data_directory/
 
 ## Requirements
 
-* Terraform >= 1.6
+* Terraform >= 1.17
 * [kreuzwerker/docker](https://github.com/kreuzwerker/terraform-provider-docker) >= 3.0.2
 
 
