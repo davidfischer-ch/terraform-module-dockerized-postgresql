@@ -111,7 +111,9 @@ data_directory/
 ## Requirements
 
 * Terraform >= 1.17
-* [kreuzwerker/docker](https://github.com/kreuzwerker/terraform-provider-docker) >= 3.0.2
+* [kreuzwerker/docker](https://github.com/kreuzwerker/terraform-provider-docker) >= 4.7.0
+    * From 4.x on, a server whose container was created without its healthcheck
+      (`healthcheck_enabled = false`) is replaced the first time the healthcheck is enabled.
 
 
 ## Tests
