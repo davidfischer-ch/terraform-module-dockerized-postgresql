@@ -4,6 +4,23 @@ locals {
   host_data_directory = "${var.data_directory}/data"
   host_init_directory = "${var.data_directory}/init"
 
+  # Set the password from PG_PASSWORD, read by psql inside the container: it never reaches a
+  # command line. One attempt every 5 seconds, until the server accepts it.
+  password_command = <<-EOT
+    until docker exec -i -e PG_PASSWORD ${var.identifier} \
+      psql -v ON_ERROR_STOP=1 -U '${var.user}' -d '${var.name}' <<'SQL'
+    \set password `printenv PG_PASSWORD`
+    SET log_statement = 'none';
+    SET log_min_duration_statement = -1;
+    SET log_min_error_statement = panic;
+    SET pg_stat_statements.track = 'none';
+    ALTER USER "${var.user}" PASSWORD :'password';
+    SQL
+    do
+      sleep 5
+    done
+  EOT
+
   linux_capabilities = [
     "ALL",
     "AUDIT_CONTROL",

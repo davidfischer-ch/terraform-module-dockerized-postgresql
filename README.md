@@ -90,6 +90,15 @@ data_directory/
 | `password` | Database password (sensitive). |
 
 
+## Secrets
+
+* The password reaches PostgreSQL from the `PG_PASSWORD` environment variable, read by `psql`
+  inside the container, and never appears on a command line.
+* Its `ALTER USER ... PASSWORD` statement runs in a session with statement logging, error statement
+  logging and `pg_stat_statements` tracking off: neither the server log nor `pg_stat_statements`
+  records it, whatever `settings` holds.
+
+
 ## Requirements
 
 * Terraform >= 1.17
@@ -103,7 +112,8 @@ terraform init -backend=false
 terraform test
 ```
 
-The tests plan against a mocked Docker provider.
+The tests plan against a mocked Docker provider: they assert the password provisioner's shell
+command on its text without running it.
 
 
 ## Actions
