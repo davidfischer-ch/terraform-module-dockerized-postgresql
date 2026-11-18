@@ -175,6 +175,18 @@ variable "password" {
   sensitive   = true
 }
 
+variable "password_timeout" {
+  type        = number
+  description = "Seconds to wait for the server to accept the password before the apply fails."
+  default     = 300
+  nullable    = false
+
+  validation {
+    condition     = var.password_timeout > 0
+    error_message = "Argument `password_timeout` must be positive."
+  }
+}
+
 # Configuration ------------------------------------------------------------------------------------
 
 variable "max_connections" {

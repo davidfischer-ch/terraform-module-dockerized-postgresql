@@ -5,8 +5,13 @@ locals {
   host_init_directory = "${var.data_directory}/init"
 
   # Set the password from PG_PASSWORD, read by psql inside the container: it never reaches a
-  # command line. One attempt every 5 seconds, until the server accepts it.
+  # command line. One attempt every 5 seconds, until the server accepts it or the time is out.
   password_command = <<-EOT
+    if [ "${var.enabled}" != true ]; then
+      echo "${var.identifier} is disabled: enable it to set the password of ${var.user}." >&2
+      exit 1
+    fi
+    attempts=${ceil(var.password_timeout / 5)}
     until docker exec -i -e PG_PASSWORD ${var.identifier} \
       psql -v ON_ERROR_STOP=1 -U '${var.user}' -d '${var.name}' <<'SQL'
     \set password `printenv PG_PASSWORD`
@@ -17,6 +22,12 @@ locals {
     ALTER USER "${var.user}" PASSWORD :'password';
     SQL
     do
+      attempts=$((attempts - 1))
+      if [ "$attempts" -le 0 ]; then
+        echo "PostgreSQL in ${var.identifier} did not accept the password of ${var.user}" \
+          "within ${var.password_timeout} seconds." >&2
+        exit 1
+      fi
       sleep 5
     done
   EOT

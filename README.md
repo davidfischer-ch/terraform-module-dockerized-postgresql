@@ -75,6 +75,7 @@ data_directory/
 | `name` | `string` | — | Database name (must match `^[A-Za-z0-9_][A-Za-z0-9_.-]*$`). |
 | `user` | `string` | — | Database user (must match `^[A-Za-z0-9_][A-Za-z0-9_.-]*$`). |
 | `password` | `string` | — | Database password (sensitive). |
+| `password_timeout` | `number` | `300` | Seconds to wait for the server to accept the password before the apply fails. |
 | `max_connections` | `number` | `100` | PostgreSQL `max_connections` (1–262143). |
 | `init_scripts` | `bool` | `false` | Bind-mount `{data_directory}/init` to `/docker-entrypoint-initdb.d`. |
 

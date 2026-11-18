@@ -10,24 +10,13 @@ variables {
   password       = "it's-a-secret"
 }
 
-run "user_refuses_shell_characters" {
+run "password_retries_end_in_an_error" {
   command = plan
 
-  variables {
-    user = "app; touch pwned #"
+  assert {
+    condition     = strcontains(local.password_command, "exit 1")
+    error_message = "The password provisioner must end in an error instead of retrying for ever."
   }
-
-  expect_failures = [var.user]
-}
-
-run "name_refuses_shell_characters" {
-  command = plan
-
-  variables {
-    name = "app $(id)"
-  }
-
-  expect_failures = [var.name]
 }
 
 run "password_connects_to_the_database" {
@@ -71,6 +60,26 @@ run "password_stays_out_of_the_command_line" {
   }
 }
 
+run "user_refuses_shell_characters" {
+  command = plan
+
+  variables {
+    user = "app; touch pwned #"
+  }
+
+  expect_failures = [var.user]
+}
+
+run "name_refuses_shell_characters" {
+  command = plan
+
+  variables {
+    name = "app $(id)"
+  }
+
+  expect_failures = [var.name]
+}
+
 run "password_statement_is_neither_logged_nor_tracked" {
   command = plan
 
@@ -92,5 +101,27 @@ run "password_statement_is_neither_logged_nor_tracked" {
       "(?s)SET pg_stat_statements.track = 'none';\\n.*ALTER USER", local.password_command
     ))
     error_message = "The logging and tracking settings must come before the password is set."
+  }
+}
+
+run "password_change_while_disabled_fails_at_once" {
+  command = plan
+
+  variables {
+    enabled = false
+  }
+
+  assert {
+    condition     = startswith(local.password_command, "if [ \"false\" != true ]; then\n")
+    error_message = "A password set while the container is disabled must fail before any attempt."
+  }
+}
+
+run "password_waits_for_the_server_while_enabled" {
+  command = plan
+
+  assert {
+    condition     = startswith(local.password_command, "if [ \"true\" != true ]; then\n")
+    error_message = "The password provisioner must try the server while the container is enabled."
   }
 }
