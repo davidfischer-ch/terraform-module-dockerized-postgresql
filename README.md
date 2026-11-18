@@ -8,6 +8,7 @@ Manage PostgreSQL server.
 * Configurable healthcheck (based on `pg_isready`)
 * Supports one-time init scripts via `/docker-entrypoint-initdb.d`
 
+
 ## Usage
 
 See [examples/default](examples/default) for a complete working configuration.
@@ -36,6 +37,7 @@ module "database" {
 }
 ```
 
+
 ## Data layout
 
 All persistent data lives under `data_directory`:
@@ -45,6 +47,7 @@ data_directory/
 ├── data/  # PostgreSQL data files (PGDATA)
 └── init/  # One-time init scripts (optional, requires init_scripts = true)
 ```
+
 
 ## Variables
 
@@ -75,6 +78,7 @@ data_directory/
 | `max_connections` | `number` | `100` | PostgreSQL `max_connections` (1–262143). |
 | `init_scripts` | `bool` | `false` | Bind-mount `{data_directory}/init` to `/docker-entrypoint-initdb.d`. |
 
+
 ## Outputs
 
 | Name | Description |
@@ -85,10 +89,12 @@ data_directory/
 | `user` | Database user. |
 | `password` | Database password (sensitive). |
 
+
 ## Requirements
 
 * Terraform >= 1.6
 * [kreuzwerker/docker](https://github.com/kreuzwerker/terraform-provider-docker) >= 3.0.2
+
 
 ## Actions
 
@@ -115,6 +121,7 @@ root@<your-container>:# psql -U $POSTGRES_USER -d $POSTGRES_DB < $PGDATA/db.sql
 root@<your-container>:# exit
 sudo docker exec -it $CONTAINER rm /var/lib/postgresql/data/db.sql
 ```
+
 
 ## References
 
