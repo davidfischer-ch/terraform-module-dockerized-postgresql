@@ -4,6 +4,7 @@ Manage PostgreSQL server.
 
 * Runs in bridge networking mode
 * Optionally publishes the port to a host IP and port
+* Optionally passes server settings on the command line (`settings`)
 * Persists data directory
 * Configurable healthcheck (based on `pg_isready`)
 * Supports one-time init scripts via `/docker-entrypoint-initdb.d`
@@ -11,7 +12,10 @@ Manage PostgreSQL server.
 
 ## Usage
 
-See [examples/default](examples/default) for a complete working configuration.
+See [examples/default](examples/default) for a complete working configuration. An extension
+loaded at the server's start takes `settings`:
+[examples/pg-stat-statements](examples/pg-stat-statements) and
+[examples/timescaledb](examples/timescaledb).
 
 ```hcl
 module "database" {
@@ -67,6 +71,7 @@ data_directory/
 | `privileged` | `bool` | `false` | Run the container in privileged mode. |
 | `cap_add` | `set(string)` | `[]` | Linux capabilities to add to the container. |
 | `cap_drop` | `set(string)` | `[]` | Linux capabilities to drop from the container. |
+| `shm_size` | `number` | `null` | Size of `/dev/shm` in MB (at least 64), the shared memory parallel query workers use. `null` leaves the current size in place; a new container gets the Docker daemon's default (64 MB unless configured). |
 | `hosts` | `map(string)` | `{}` | Extra `/etc/hosts` entries for the container. |
 | `network_id` | `string` | — | Docker network to attach to. |
 | `port` | `number` | `5432` | PostgreSQL port (changing not yet implemented). |
@@ -78,6 +83,7 @@ data_directory/
 | `password_timeout` | `number` | `300` | Seconds to wait for the server to accept the password before the apply fails. |
 | `max_connections` | `number` | `100` | PostgreSQL `max_connections` (1–262143). |
 | `init_scripts` | `bool` | `false` | Bind-mount `{data_directory}/init` to `/docker-entrypoint-initdb.d`. |
+| `settings` | `map(string)` | `{}` | Server settings, each passed as `-c name=value` (`shared_buffers`, `TimeZone`, `pg_stat_statements.track`…); they override the configuration files. `max_connections` has its own variable; `listen_addresses`, `port` and `unix_socket_directories` are refused. Values must not be null nor hold control characters, and must hold no secret (see [Secrets](#secrets)). |
 
 
 ## Outputs
@@ -93,6 +99,8 @@ data_directory/
 
 ## Secrets
 
+* The values of `settings` are part of the container's command: `docker inspect` and the host's
+  process list show them. Keep secrets out of them.
 * The password reaches PostgreSQL from the `PG_PASSWORD` environment variable, read by `psql`
   inside the container, and never appears on a command line.
 * Its `ALTER USER ... PASSWORD` statement runs in a session with statement logging, error statement
@@ -114,7 +122,8 @@ terraform test
 ```
 
 The tests plan against a mocked Docker provider: they assert the password provisioner's shell
-command on its text without running it.
+command on its text without running it, and cover neither the server's handling of `settings` nor
+the provider's plan of an existing container (an `shm_size` set back to `null`).
 
 
 ## Actions

@@ -19,6 +19,10 @@ module "database" {
   identifier = "my-app-database"
   image_id   = docker_image.postgresql.image_id
 
+  # Process (optional): /dev/shm in MB, for parallel queries
+
+  # shm_size = 256
+
   # Networking
 
   network_id = docker_network.app.id
@@ -38,4 +42,8 @@ module "database" {
   # Authentication
 
   password = random_password.database.result
+
+  # Configuration (optional): server settings, each passed as `-c name=value`
+
+  # settings = { shared_buffers = "1GB", work_mem = "32MB" }
 }

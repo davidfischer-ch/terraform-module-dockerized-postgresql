@@ -10,7 +10,10 @@ resource "docker_container" "server" {
   image = var.image_id
   name  = var.identifier
 
-  command = ["-N", tostring(var.max_connections)]
+  command = concat(
+    ["-N", tostring(var.max_connections)],
+    flatten([for name, value in var.settings : ["-c", "${name}=${value}"]])
+  )
 
   must_run = var.enabled
   start    = var.enabled
@@ -29,7 +32,7 @@ resource "docker_container" "server" {
 
   user = "${var.app_uid}:${var.app_gid}"
 
-  # shm_size = 256 # MB
+  shm_size = var.shm_size
 
   env = [
     "POSTGRES_DB=${var.name}",

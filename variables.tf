@@ -100,6 +100,20 @@ variable "cap_drop" {
   }
 }
 
+variable "shm_size" {
+  type        = number
+  description = <<EOT
+    Size of /dev/shm in MB, the shared memory parallel query workers use. Null leaves the current
+    size in place; a new container gets the Docker daemon's default (64 MB unless configured).
+  EOT
+  default     = null
+
+  validation {
+    condition     = var.shm_size == null || try(var.shm_size >= 64, false)
+    error_message = "Argument `shm_size` must be null or at least 64 (MB)."
+  }
+}
+
 # Networking ---------------------------------------------------------------------------------------
 
 variable "hosts" {
@@ -210,4 +224,55 @@ variable "init_scripts" {
     Scripts placed there run once when PostgreSQL initializes a new database.
   EOT
   default     = false
+}
+
+variable "settings" {
+  type        = map(string)
+  description = <<EOT
+    Server settings passed on the command line, each as `-c name=value`, e.g.
+    `{ shared_buffers = "1GB", work_mem = "32MB" }`. They override postgresql.conf and
+    postgresql.auto.conf. `max_connections` has its own variable. The values show in
+    `docker inspect` and in the host's process list: keep secrets out of them.
+  EOT
+  default     = {}
+  nullable    = false
+
+  validation {
+    condition = alltrue([
+      for name in keys(var.settings) :
+      can(regex("^[A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)*$", name))
+    ])
+    error_message = <<EOT
+      Each key of `settings` must be a PostgreSQL setting name, as `work_mem` or
+      `pg_stat_statements.track`.
+    EOT
+  }
+
+  validation {
+    condition     = !contains([for name in keys(var.settings) : lower(name)], "max_connections")
+    error_message = "Set `max_connections` with its own variable, not in `settings`."
+  }
+
+  validation {
+    condition = length(setintersection(
+      [for name in keys(var.settings) : lower(name)],
+      ["listen_addresses", "port", "unix_socket_directories"]
+    )) == 0
+    error_message = <<EOT
+      The healthcheck, the password provisioner and the published port rely on the default
+      `listen_addresses`, `port` and `unix_socket_directories`: leave them out of `settings`.
+    EOT
+  }
+
+  validation {
+    condition     = alltrue([for value in values(var.settings) : value != null])
+    error_message = "Each value of `settings` must be set: leave a setting out rather than null."
+  }
+
+  validation {
+    condition = alltrue([
+      for value in values(var.settings) : !can(regex("[[:cntrl:]]", value))
+    ])
+    error_message = "Each value of `settings` must hold no control character (a tab, a newline)."
+  }
 }
