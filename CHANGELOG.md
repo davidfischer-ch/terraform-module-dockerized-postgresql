@@ -1,5 +1,51 @@
 # Changelog
 
+
+## Release v1.3.3 (2026-11-18)
+
+Diff: https://github.com/davidfischer-ch/terraform-module-dockerized-postgresql/compare/1.3.2...1.3.3
+
+### Features
+
+Server:
+
+* Add a `settings` variable to pass server settings on the command line, each as `-c name=value`
+* Add a `shm_size` variable to size `/dev/shm` for parallel queries
+
+Password:
+
+* Add a `password_timeout` variable bounding how long setting the password is retried
+
+CI:
+
+* Add a GitHub workflow running the format check, validation and tests at every push, with the newest Docker provider and its minimum
+
+Docs:
+
+* Add an example for each extension loaded at the server's start: `pg_stat_statements` and TimescaleDB
+
+### Fix and enhancements
+
+Password:
+
+* Set the password from the container's environment, out of command lines, SQL text and server logs
+* Connect to the `name` database when setting the password, not to one named after `user`
+* Fail at once when the password changes while the container is disabled, and after `password_timeout` otherwise, instead of retrying for ever
+* Refuse a `user` or `name` the shell and SQL would misread
+
+Variables:
+
+* Report a malformed `identifier` with its own validation message
+
+Requirements:
+
+* Require Terraform 1.17
+
+Docs:
+
+* Add the Secrets and Tests sections to the README
+
+
 ## Release v1.3.2 (2026-08-11)
 
 ### Features
