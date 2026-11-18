@@ -1,6 +1,22 @@
 # Changelog
 
 
+## Release v1.3.4 (2026-11-18)
+
+Diff: https://github.com/davidfischer-ch/terraform-module-dockerized-postgresql/compare/1.3.3...1.3.4
+
+### Fix and enhancements
+
+Requirements:
+
+* Require the Docker provider 4.7.0
+    * A container created without its healthcheck is replaced the first time the healthcheck is enabled
+
+Docs:
+
+* Point the README and the examples at this release
+
+
 ## Release v1.3.3 (2026-11-18)
 
 Diff: https://github.com/davidfischer-ch/terraform-module-dockerized-postgresql/compare/1.3.2...1.3.3
