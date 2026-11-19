@@ -55,7 +55,9 @@ jobs:
         with:
           terraform_version: '1.17'
           terraform_wrapper: false
-      - run: sudo -E env "PATH=$PATH" sh tests/e2e/run.sh
+      - run: >-
+          sudo env "PATH=$PATH" "E2E_IMAGE=$E2E_IMAGE" "E2E_SETTINGS=$E2E_SETTINGS"
+          sh tests/e2e/run.sh
         env:
           E2E_IMAGE: ${{ matrix.image }}
           E2E_SETTINGS: ${{ matrix.settings }}
