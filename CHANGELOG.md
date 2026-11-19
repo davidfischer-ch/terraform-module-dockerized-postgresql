@@ -1,6 +1,29 @@
 # Changelog
 
 
+## Release v1.3.5 (2026-11-19)
+
+Diff: https://github.com/davidfischer-ch/terraform-module-dockerized-postgresql/compare/1.3.4...1.3.5
+
+### Features
+
+Actions:
+
+* Add `backup` and `restore` actions, through a time-stamped uncompressed dump in `{data_directory}/backup`
+    * The container is replaced once on upgrade, to mount `{data_directory}/backup`
+    * Restore keeps the objects' owners and restores TimescaleDB hypertables
+* Add `analyze`, `check`, `reindex` and `update_extensions` maintenance actions
+
+CI:
+
+* Add an end-to-end test of the module and its actions against a real Docker daemon, on PostgreSQL and TimescaleDB, in the GitHub workflow and the GitLab pipeline
+
+Docs:
+
+* Replace the README's manual backup and restore steps with the actions
+* Point the README and the examples at this release
+
+
 ## Release v1.3.4 (2026-11-18)
 
 Diff: https://github.com/davidfischer-ch/terraform-module-dockerized-postgresql/compare/1.3.3...1.3.4
