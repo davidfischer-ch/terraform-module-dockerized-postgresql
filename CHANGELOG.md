@@ -1,6 +1,26 @@
 # Changelog
 
 
+## Release v1.3.6 (2026-11-19)
+
+Diff: https://github.com/davidfischer-ch/terraform-module-dockerized-postgresql/compare/1.3.5...1.3.6
+
+### Fix and enhancements
+
+Server:
+
+* Pass `ALL` in `cap_add` and `cap_drop` to Docker as its wildcard instead of `CAP_ALL`
+
+CI:
+
+* Pass the scenario's variables through `sudo` in the GitHub end-to-end job
+
+Docs:
+
+* Document `ALL` in `cap_add` and `cap_drop`
+* Point the README and the examples at this release
+
+
 ## Release v1.3.5 (2026-11-19)
 
 Diff: https://github.com/davidfischer-ch/terraform-module-dockerized-postgresql/compare/1.3.4...1.3.5

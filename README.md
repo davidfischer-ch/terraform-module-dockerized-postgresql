@@ -19,7 +19,7 @@ loaded at the server's start takes `settings`:
 
 ```hcl
 module "database" {
-  source = "git::https://github.com/davidfischer-ch/terraform-module-dockerized-postgresql.git?ref=1.3.5"
+  source = "git::https://github.com/davidfischer-ch/terraform-module-dockerized-postgresql.git?ref=1.3.6"
 
   identifier = "my-app-database"
   image_id   = docker_image.postgresql.image_id
