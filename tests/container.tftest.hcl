@@ -188,6 +188,24 @@ run "capabilities_carry_the_cap_prefix" {
   }
 }
 
+run "all_capabilities_keep_dockers_wildcard" {
+  command = plan
+
+  variables {
+    cap_add  = ["NET_BIND_SERVICE"]
+    cap_drop = ["ALL"]
+  }
+
+  assert {
+    condition = anytrue([
+      for capabilities in docker_container.server.capabilities :
+      toset(capabilities.drop) == toset(["ALL"])
+      && toset(capabilities.add) == toset(["CAP_NET_BIND_SERVICE"])
+    ])
+    error_message = "ALL must reach Docker as its wildcard, the other capabilities with CAP_."
+  }
+}
+
 run "capabilities_are_left_out_by_default" {
   command = plan
 

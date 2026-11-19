@@ -82,7 +82,7 @@ variable "privileged" {
 
 variable "cap_add" {
   type        = set(string)
-  description = "Linux capabilities to add to the container."
+  description = "Linux capabilities to add to the container, `ALL` for every one."
   default     = []
   validation {
     condition     = length(setsubtract(var.cap_add, local.linux_capabilities)) == 0
@@ -92,7 +92,7 @@ variable "cap_add" {
 
 variable "cap_drop" {
   type        = set(string)
-  description = "Linux capabilities to drop from the container."
+  description = "Linux capabilities to drop from the container, `ALL` for every one."
   default     = []
   validation {
     condition     = length(setsubtract(var.cap_drop, local.linux_capabilities)) == 0

@@ -24,9 +24,10 @@ resource "docker_container" "server" {
 
   dynamic "capabilities" {
     for_each = length(var.cap_add) + length(var.cap_drop) > 0 ? [1] : []
+    # Docker takes the wildcard as ALL and every other capability with its CAP_ prefix.
     content {
-      add  = [for cap in var.cap_add : "CAP_${cap}"]
-      drop = [for cap in var.cap_drop : "CAP_${cap}"]
+      add  = [for cap in var.cap_add : cap == "ALL" ? cap : "CAP_${cap}"]
+      drop = [for cap in var.cap_drop : cap == "ALL" ? cap : "CAP_${cap}"]
     }
   }
 

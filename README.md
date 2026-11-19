@@ -72,8 +72,8 @@ data_directory/
 | `app_uid` | `number` | `999` | UID of the user running the container and owning the data directories. |
 | `app_gid` | `number` | `999` | GID of the user running the container and owning the data directories. |
 | `privileged` | `bool` | `false` | Run the container in privileged mode. |
-| `cap_add` | `set(string)` | `[]` | Linux capabilities to add to the container. |
-| `cap_drop` | `set(string)` | `[]` | Linux capabilities to drop from the container. |
+| `cap_add` | `set(string)` | `[]` | Linux capabilities to add to the container, `ALL` for every one. |
+| `cap_drop` | `set(string)` | `[]` | Linux capabilities to drop from the container, `ALL` for every one. |
 | `shm_size` | `number` | `null` | Size of `/dev/shm` in MB (at least 64), the shared memory parallel query workers use. `null` leaves the current size in place; a new container gets the Docker daemon's default (64 MB unless configured). |
 | `hosts` | `map(string)` | `{}` | Extra `/etc/hosts` entries for the container. |
 | `network_id` | `string` | required | Docker network to attach to. |
