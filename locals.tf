@@ -1,8 +1,10 @@
 locals {
-  container_data_directory = "/var/lib/postgresql/data"
+  container_backup_directory = "/var/lib/postgresql/backup"
+  container_data_directory   = "/var/lib/postgresql/data"
 
-  host_data_directory = "${var.data_directory}/data"
-  host_init_directory = "${var.data_directory}/init"
+  host_backup_directory = "${var.data_directory}/backup"
+  host_data_directory   = "${var.data_directory}/data"
+  host_init_directory   = "${var.data_directory}/init"
 
   # Set the password from PG_PASSWORD, read by psql inside the container: it never reaches a
   # command line. One attempt every 5 seconds, until the server accepts it or the time is out.

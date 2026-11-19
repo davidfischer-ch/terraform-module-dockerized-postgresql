@@ -83,6 +83,12 @@ resource "docker_container" "server" {
     read_only      = false
   }
 
+  volumes {
+    container_path = local.container_backup_directory
+    host_path      = local.host_backup_directory
+    read_only      = false
+  }
+
   # Init scripts (read-only, runs only on first init)
   dynamic "volumes" {
     for_each = var.init_scripts ? [local.host_init_directory] : []

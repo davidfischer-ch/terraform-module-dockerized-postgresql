@@ -48,8 +48,11 @@ All persistent data lives under `data_directory`:
 
 ```
 data_directory/
-├── data/  # PostgreSQL data files (PGDATA)
-└── init/  # One-time init scripts (optional, requires init_scripts = true)
+├── data/    # PostgreSQL data files (PGDATA)
+├── init/    # One-time init scripts (optional, requires init_scripts = true)
+└── backup/  # The backup action's dump, which the restore action reads
+    ├── dump-20260101T020000Z/      # The last complete dump, named after its UTC time
+    └── dump-20260102T020000Z.tmp/  # A dump being written
 ```
 
 
@@ -57,7 +60,7 @@ data_directory/
 
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
-| `identifier` | `string` | — | Unique name for resources (must match `^[a-z]+(-[a-z0-9]+)*$`). |
+| `identifier` | `string` | required | Unique name for resources (must match `^[a-z]+(-[a-z0-9]+)*$`). |
 | `enabled` | `bool` | `true` | Start or stop the container. |
 | `wait` | `bool` | `true` | Wait for the container to reach a healthy state after creation. |
 | `healthcheck_enabled` | `bool` | `true` | Enable the healthcheck (based on `pg_isready`). |
@@ -65,7 +68,7 @@ data_directory/
 | `healthcheck_timeout` | `string` | `"5s"` | Maximum time to wait for a healthcheck to complete. |
 | `healthcheck_retries` | `number` | `5` | Consecutive failures before marking unhealthy. |
 | `healthcheck_start_period` | `string` | `"1m0s"` | Grace period during startup. |
-| `image_id` | `string` | — | [PostgreSQL](https://hub.docker.com/_/postgres/tags) Docker image's ID. |
+| `image_id` | `string` | required | [PostgreSQL](https://hub.docker.com/_/postgres/tags) Docker image's ID. |
 | `app_uid` | `number` | `999` | UID of the user running the container and owning the data directories. |
 | `app_gid` | `number` | `999` | GID of the user running the container and owning the data directories. |
 | `privileged` | `bool` | `false` | Run the container in privileged mode. |
@@ -73,15 +76,15 @@ data_directory/
 | `cap_drop` | `set(string)` | `[]` | Linux capabilities to drop from the container. |
 | `shm_size` | `number` | `null` | Size of `/dev/shm` in MB (at least 64), the shared memory parallel query workers use. `null` leaves the current size in place; a new container gets the Docker daemon's default (64 MB unless configured). |
 | `hosts` | `map(string)` | `{}` | Extra `/etc/hosts` entries for the container. |
-| `network_id` | `string` | — | Docker network to attach to. |
+| `network_id` | `string` | required | Docker network to attach to. |
 | `port` | `number` | `5432` | PostgreSQL port (changing not yet implemented). |
 | `publish` | `object({ host_ip = string, host_port = optional(number, 5432) })` | `null` | Publish the port to the host (`host_ip` to bind, `host_port` the external port). `null` keeps it reachable only from other containers on `network_id`. |
-| `data_directory` | `string` | — | Host path for persistent volumes. |
-| `name` | `string` | — | Database name (must match `^[A-Za-z0-9_][A-Za-z0-9_.-]*$`). |
-| `user` | `string` | — | Database user (must match `^[A-Za-z0-9_][A-Za-z0-9_.-]*$`). |
-| `password` | `string` | — | Database password (sensitive). |
+| `data_directory` | `string` | required | Host path for persistent volumes. |
+| `name` | `string` | required | Database name (must match `^[A-Za-z0-9_][A-Za-z0-9_.-]*$`). |
+| `user` | `string` | required | Database user (must match `^[A-Za-z0-9_][A-Za-z0-9_.-]*$`). |
+| `password` | `string` | required | Database password (sensitive). |
 | `password_timeout` | `number` | `300` | Seconds to wait for the server to accept the password before the apply fails. |
-| `max_connections` | `number` | `100` | PostgreSQL `max_connections` (1–262143). |
+| `max_connections` | `number` | `100` | PostgreSQL `max_connections` (1 to 262143). |
 | `init_scripts` | `bool` | `false` | Bind-mount `{data_directory}/init` to `/docker-entrypoint-initdb.d`. |
 | `settings` | `map(string)` | `{}` | Server settings, each passed as `-c name=value` (`shared_buffers`, `TimeZone`, `pg_stat_statements.track`…); they override the configuration files. `max_connections` has its own variable; `listen_addresses`, `port` and `unix_socket_directories` are refused. Values must not be null nor hold control characters, and must hold no secret (see [Secrets](#secrets)). |
 
@@ -124,37 +127,54 @@ terraform test
 ```
 
 The tests plan against a mocked Docker provider: they assert the password provisioner's shell
-command on its text without running it, and cover neither the server's handling of `settings` nor
-the provider's plan of an existing container (an `shm_size` set back to `null`). They run on every
-push, in the GitHub workflow (with the newest Docker provider and its minimum) and in the GitLab
-pipeline.
+command on its text without running it, and leave out the provider's plan of an existing container
+(an `shm_size` set back to `null`). They run on every push, in the GitHub workflow (with the newest
+Docker provider and its minimum) and in the GitLab pipeline.
+
+`tests/e2e/run.sh` applies the module against a real Docker daemon, checks the password, runs every
+action on real data, then destroys everything. The GitHub workflow and the GitLab pipeline run it
+on PostgreSQL and on TimescaleDB, its library loaded through `settings`; locally, as root:
+
+```bash
+E2E_IMAGE=postgres:18.1 sh tests/e2e/run.sh
+```
 
 
 ## Actions
 
-### Backup database (to a SQL dump)
+On-demand operations on the database. Each runs only when invoked, never during an ordinary
+`apply`, and leaves nothing in the state:
 
-Note: PGDATA is /var/lib/postgresql/data/
-
-```
-CONTAINER=<your-container>
-sudo docker exec -it $CONTAINER /bin/bash
-root@<your-container>:/# PGPASSWORD=$POSTGRES_PASSWORD pg_dump $POSTGRES_DB --no-owner --no-privileges --clean --format p --file $PGDATA/db.sql --username $POSTGRES_USER
-root@<your-container>:/# exit
-sudo docker cp $CONTAINER:/var/lib/postgresql/data/db.sql db.sql
-sudo docker exec -it $CONTAINER rm /var/lib/postgresql/data/db.sql
+```bash
+terraform apply -invoke='module.database.action.docker_exec.<action>'
 ```
 
-### Restore database (from a SQL dump)
+Replace `module.database` with the module's address.
 
-```
-CONTAINER=<your-container>
-sudo docker cp db.sql $CONTAINER:/var/lib/postgresql/data/db.sql
-sudo docker exec -it $CONTAINER /bin/bash
-root@<your-container>:# psql -U $POSTGRES_USER -d $POSTGRES_DB < $PGDATA/db.sql
-root@<your-container>:# exit
-sudo docker exec -it $CONTAINER rm /var/lib/postgresql/data/db.sql
-```
+### Backup
+
+Both work in `{data_directory}/backup`.
+
+| Action | What it does | When |
+|--------|--------------|------|
+| `backup` | `pg_dump` into `{data_directory}/backup/dump-<UTC time>.tmp`, in directory format and uncompressed, renamed `dump-<UTC time>` once complete; the older dumps and the unfinished ones are removed only then | Before an upgrade or a risky change, or on a schedule |
+| `restore` | `pg_restore` of the newest complete dump: its objects dropped and created again with their owners, in one transaction, which leaves the database as it was on failure; TimescaleDB stays in restoring mode meanwhile | To roll the database back to the last dump |
+
+One dump is kept. To bring an older one back, restore it with restic into `{data_directory}/backup`
+as the newest `dump-*`, then invoke `restore`.
+
+### Maintenance
+
+| Action | What it does | When |
+|--------|--------------|------|
+| `analyze` | `vacuumdb --analyze-only`: the planner's statistics of every table | After a restore or a large load |
+| `check` | `pg_amcheck`: tables and B-tree indexes checked for corruption, `amcheck` installed where missing | After a crash, a disk error or a host change |
+| `reindex` | `reindexdb --concurrently`: every index rebuilt without blocking writes, the system catalogs left out | After deleting a large share of a table's rows |
+| `update_extensions` | `ALTER EXTENSION ... UPDATE` for every installed extension, each in a session of its own | After moving to an image carrying newer extensions |
+
+`analyze` and `reindex` run one table after the other: a parallel run lists the tables first, and
+fails on the internal tables TimescaleDB drops meanwhile. `update_extensions` opens a session per
+extension, since TimescaleDB updates only as the first command of a session.
 
 
 ## References
